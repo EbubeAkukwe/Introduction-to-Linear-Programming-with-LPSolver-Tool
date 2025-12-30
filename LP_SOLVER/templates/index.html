@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LP Solver</title>
+    <style>
+        body { font-family: 'monospace'; max-width: 800px; margin: auto; padding: 20px; color:#eceff4; background-color:#1f1f1f; font-size:20px }
+        textarea { width: 100%; height: 200px; padding: 10px; box-sizing: border-box; }
+        button { padding: 10px 20px; margin-top: 10px; }
+        pre { background-color: #2d2c2c; color:#eceff4; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+        #solution-output { font-family: 'monospace' }
+        .error { color: red; }
+        p { font-size: 30px; }
+        a { text-decoration: none; color: #585757ff; }
+        a:hover {text-decoration: underline;}
+        footer {text-align: center; justify-content: center;}
+    </style>
+</head>
+<body>
+    <header style="background-color:#204a87;color:white;width:100%;padding:10px;font-family:monospace;font-size:40px;">Natural Language LP Solver</header>
+    <p>Describe your linear programming problem below and the framework will solve it for you.</p>
+
+    <form id="lp-form">
+        <textarea name="problem_text" placeholder="Example: A bakery makes cakes and pies. Cakes sell for $10 profit and pies for $8 profit. A cake needs 2 cups of flour and 1 egg. A pie needs 1 cup of flour and 1 egg. The bakery has 10 cups of flour and 6 eggs. Maximize profit.">A bakery makes cakes and pies. Cakes sell for $10 profit and pies for $8 profit. A cake needs 2 cups of flour and 1 egg. A pie needs 1 cup of flour and 1 egg. The bakery has 10 cups of flour and 6 eggs. Maximize profit.</textarea>
+        <br>
+        <button type="submit">Solve Problem</button>
+    </form>
+    
+    <h2>Solution</h2>
+    <pre id="solution-output">
+        The solution will appear here after you submit to the frame work
+    </pre>
+
+
+    <input id="apiKeyInput" placeholder="Enter your Gemini API Key" />
+    <button onclick="saveApiKey()">Save Key</button>
+
+    <script>
+        function saveApiKey() {
+            const key = document.getElementById("apiKeyInput").value.trim();
+            if (!key) return alert("Please enter a valid API key");
+
+            localStorage.setItem("GEMINI_KEY", key);
+            alert("API key saved successfully!");
+        }
+    </script>
+
+
+    <script>
+        const messages = [
+            "Solving...",
+            "The framework is working on it...",
+            "Running optimization...",
+            "Computing the best solution...",
+            "Optimizing... please wait.",
+            "Hold tight! Calculating...",
+            "Thinking really hard...",
+            "Just a few more moments...",
+            "Trying to be as efficient as possible...",
+            "Looking for the best answer..."
+        ];
+
+        document.getElementById('lp-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const apiKey = localStorage.getItem("GEMINI_KEY");
+            if (!apiKey) {
+                alert("Please enter and save your Gemini API Key first!");
+                return;
+            }
+
+            const form = e.target;
+            const outputElement = document.getElementById('solution-output');
+            outputElement.textContent = messages[Math.floor(Math.random() * messages.length)];
+            outputElement.classList.remove('error');
+
+            try {
+                const response = await fetch("/solve", {
+                    method: "POST",
+                    body: new FormData(form),
+                    headers: {
+                        "X-GEMINI-API-KEY": apiKey
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    outputElement.innerHTML = 'SOLVED IN: ' + result["execution_time"] + '\n\n';
+                    outputElement.innerHTML += 'LP MODEL FROM PROBLEM AS JSON DATA:\n' + result["parsed_data"] + '\n\n';
+                    outputElement.innerHTML += 'FRAMEWORK RESPONSE:\n' + result["solution"] + '\n\n';
+                    outputElement.innerHTML += 'EXPLANATION IN NATURAL LANGUAGE:\n' + (result["explained_solution"]) + '\n';
+                } else {
+                    outputElement.textContent = 'Error: ' + (result.message || 'Try Again...');
+                    outputElement.classList.add('error');
+                }
+            } catch (error) {
+                console.error(error);
+                outputElement.textContent = 'An unexpected error occurred. Please check the server logs.';
+                outputElement.classList.add('error');
+            }
+        });
+    </script>
+</body>
+<footer>Project by <a href="https://x.com/EbubeAkukwe" target="__blank">Ebube Akukwe</a> @ 2025</footer>
+</html>
