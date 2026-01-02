@@ -23,7 +23,7 @@
     <form id="lp-form">
         <textarea name="problem_text" placeholder="Example: A bakery makes cakes and pies. Cakes sell for $10 profit and pies for $8 profit. A cake needs 2 cups of flour and 1 egg. A pie needs 1 cup of flour and 1 egg. The bakery has 10 cups of flour and 6 eggs. Maximize profit.">A bakery makes cakes and pies. Cakes sell for $10 profit and pies for $8 profit. A cake needs 2 cups of flour and 1 egg. A pie needs 1 cup of flour and 1 egg. The bakery has 10 cups of flour and 6 eggs. Maximize profit.</textarea>
         <br>
-        <button type="submit">Solve Problem</button>
+        <button style="align-self: center;justify-content: center;display:table;margin-left: auto;margin-right: auto;" type="submit">Solve Problem</button>
     </form>
     
     <h2>Solution</h2>
@@ -32,8 +32,10 @@
     </pre>
 
 
-    <input id="apiKeyInput" placeholder="Enter your Gemini API Key" />
-    <button onclick="saveApiKey()">Save Key</button>
+    <div style="padding:10px;margin:10px;align-self: center;justify-content: center;display:table;margin-left: auto;margin-right: auto;">
+        <input style="padding:10px;width:300px;" id="apiKeyInput" placeholder="Enter your Gemini API Key" />
+        <button onclick="saveApiKey()">Save Key</button>
+    </div>
 
     <script>
         function saveApiKey() {
@@ -101,5 +103,5 @@
         });
     </script>
 </body>
-<footer>Project by <a href="https://x.com/EbubeAkukwe" target="__blank">Ebube Akukwe</a> @ 2025</footer>
+<footer style="position:relative;">Project by <a href="https://x.com/EbubeAkukwe" target="__blank">Ebube Akukwe</a> @ 2025</footer>
 </html>
